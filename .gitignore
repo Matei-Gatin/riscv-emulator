@@ -1,0 +1,23 @@
+# Build output
+build/
+cmake-build-*/
+compile_commands.json
+
+# CLion
+.idea/
+
+# Editor and OS files
+*.swp
+.DS_Store
+
+# Nix
+result
+.direnv/
+
+# Local assistant tooling
+CLAUDE.md
+.claude/
+.mcp.json
+
+# Secrets
+.env
