@@ -56,7 +56,7 @@ TEST(MemoryTest, Write32ThenRead32RoundTrips) {
 
 TEST(MemoryTest, LastWholeWordIsAccessible) {
     Memory memory{kSmallSize};
-    const auto lastWord = static_cast<std::uint32_t>(kSmallSize - Memory::kBytesPerWord);
+    const auto lastWord = static_cast<std::uint32_t>(kSmallSize - Memory::s_kBytesPerWord);
 
     memory.write32(lastWord, 0xDEADBEEF);
 
@@ -85,10 +85,9 @@ TEST(MemoryTest, FailedWrite32ChangesNothing) {
 }
 
 TEST(MemoryTest, AddressNearTopOfAddressSpaceThrows) {
-    // 0xFFFFFFFE + 4 wraps around to 2 in 32-bit arithmetic; the check must not be fooled.
     const Memory memory{kSmallSize};
 
     EXPECT_THROW((void)memory.read32(0xFFFFFFFE), std::out_of_range);
 }
 
-} // namespace
+}

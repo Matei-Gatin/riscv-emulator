@@ -1,7 +1,3 @@
-//
-// Created by matt on 10/14/26.
-//
-
 #ifndef VM_PROJECT_MEMORY_H
 #define VM_PROJECT_MEMORY_H
 
@@ -9,15 +5,12 @@
 #include <cstdint>
 #include <vector>
 
-// Guest RAM: a fixed block of bytes. Guest address N is index N.
-// Multi-byte values are stored little-endian: byte i of a value lives at address + i.
-// Any access outside the block throws std::out_of_range and changes nothing.
 class Memory {
 public:
-    static constexpr std::size_t kDefaultSize = 1024 * 1024; // 1 MiB
-    static constexpr std::uint32_t kBytesPerWord = 4;
+    static constexpr std::size_t s_kDefaultSize = 1024 * 1024;
+    static constexpr std::uint32_t s_kBytesPerWord = 4;
 
-    explicit Memory(std::size_t size = kDefaultSize)
+    explicit Memory(const std::size_t size = s_kDefaultSize)
         : m_bytes(size) { }
 
     [[nodiscard]] std::size_t size() const { return m_bytes.size(); }
@@ -29,7 +22,7 @@ public:
     void write32(std::uint32_t address, std::uint32_t value);
 
 private:
-    static constexpr std::uint32_t kBitsPerByte = 8;
+    static constexpr std::uint32_t s_kBitsPerByte = 8;
 
     std::vector<std::uint8_t> m_bytes;
 

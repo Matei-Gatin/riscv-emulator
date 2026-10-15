@@ -1,14 +1,8 @@
-//
-// Created by matt on 10/14/26.
-//
-
 #include "memory.h"
 
 #include <format>
 #include <stdexcept>
 
-// Checks [address, address + length) in one go, before anything is read or written.
-// Written as a subtraction so that address + length can never wrap around.
 void Memory::checkRange(const std::uint32_t address, const std::size_t length) const {
     if (address >= m_bytes.size() || length > m_bytes.size() - address) {
         throw std::out_of_range(std::format(
@@ -28,19 +22,19 @@ void Memory::write8(const std::uint32_t address, const std::uint8_t value) {
 }
 
 std::uint32_t Memory::read32(const std::uint32_t address) const {
-    checkRange(address, kBytesPerWord);
+    checkRange(address, s_kBytesPerWord);
 
-    std::uint32_t value = 0;
-    for (std::uint32_t i = 0; i < kBytesPerWord; i++) {
-        value |= static_cast<std::uint32_t>(m_bytes[address + i]) << (kBitsPerByte * i);
+    std::uint32_t value {};
+    for (std::uint32_t i = 0; i < s_kBytesPerWord; i++) {
+        value |= static_cast<std::uint32_t>(m_bytes[address + i]) << (s_kBitsPerByte * i);
     }
     return value;
 }
 
 void Memory::write32(const std::uint32_t address, const std::uint32_t value) {
-    checkRange(address, kBytesPerWord);
+    checkRange(address, s_kBytesPerWord);
 
-    for (std::uint32_t i = 0; i < kBytesPerWord; i++) {
-        m_bytes[address + i] = static_cast<std::uint8_t>(value >> (kBitsPerByte * i));
+    for (std::uint32_t i = 0; i < s_kBytesPerWord; i++) {
+        m_bytes[address + i] = static_cast<std::uint8_t>(value >> (s_kBitsPerByte * i));
     }
 }
