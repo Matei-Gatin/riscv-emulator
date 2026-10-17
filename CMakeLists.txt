@@ -10,8 +10,7 @@ set(VM_WARNINGS -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion)
 
 add_library(vm_core
         src/memory.cpp
-        src/registers.cpp
-        src/registers.h)
+        src/registers.cpp)
 target_include_directories(vm_core PUBLIC src)
 target_compile_options(vm_core PRIVATE ${VM_WARNINGS})
 
