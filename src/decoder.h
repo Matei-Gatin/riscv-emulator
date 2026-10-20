@@ -11,6 +11,7 @@ namespace decoder {
 [[nodiscard]] std::uint8_t rs1(std::uint32_t instruction);
 [[nodiscard]] std::uint8_t rs2(std::uint32_t instruction);
 [[nodiscard]] std::uint8_t funct7(std::uint32_t instruction);
+[[nodiscard]] std::int32_t immI(std::uint32_t instruction);
 
 }
 

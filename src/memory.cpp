@@ -25,7 +25,7 @@ std::uint32_t Memory::read32(const std::uint32_t address) const {
     checkRange(address, s_kBytesPerWord);
 
     std::uint32_t value {};
-    for (std::uint32_t i = 0; i < s_kBytesPerWord; i++) {
+    for (std::uint32_t i {0}; i < s_kBytesPerWord; i++) {
         value |= static_cast<std::uint32_t>(m_bytes[address + i]) << (s_kBitsPerByte * i);
     }
     return value;
@@ -34,7 +34,7 @@ std::uint32_t Memory::read32(const std::uint32_t address) const {
 void Memory::write32(const std::uint32_t address, const std::uint32_t value) {
     checkRange(address, s_kBytesPerWord);
 
-    for (std::uint32_t i = 0; i < s_kBytesPerWord; i++) {
+    for (std::uint32_t i {0}; i < s_kBytesPerWord; i++) {
         m_bytes[address + i] = static_cast<std::uint8_t>(value >> (s_kBitsPerByte * i));
     }
 }

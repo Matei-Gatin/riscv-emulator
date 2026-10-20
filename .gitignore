@@ -21,3 +21,4 @@ CLAUDE.md
 
 # Secrets
 .env
+.cache/

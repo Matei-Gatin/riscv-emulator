@@ -7,12 +7,12 @@
 
 namespace {
 
-constexpr std::uint32_t kLastRegister = Registers::s_kRegisterCount - 1;
+constexpr std::uint32_t kLastRegister {Registers::s_kRegisterCount - 1};
 
 TEST(RegistersTest, StartsZeroed) {
     const Registers registers {};
 
-    for (std::uint32_t index = 0; index < Registers::s_kRegisterCount; index++) {
+    for (std::uint32_t index {0}; index < Registers::s_kRegisterCount; index++) {
         EXPECT_EQ(registers.read(index), 0) << "at register x" << index;
     }
 }

@@ -7,12 +7,12 @@
 
 namespace {
 
-constexpr std::size_t kSmallSize = 16;
+constexpr std::size_t kSmallSize {16};
 
 TEST(MemoryTest, StartsZeroed) {
     const Memory memory{kSmallSize};
 
-    for (std::uint32_t address = 0; address < kSmallSize; address++) {
+    for (std::uint32_t address {0}; address < kSmallSize; address++) {
         EXPECT_EQ(memory.read8(address), 0) << "at address " << address;
     }
 }
@@ -56,7 +56,7 @@ TEST(MemoryTest, Write32ThenRead32RoundTrips) {
 
 TEST(MemoryTest, LastWholeWordIsAccessible) {
     Memory memory{kSmallSize};
-    const auto lastWord = static_cast<std::uint32_t>(kSmallSize - Memory::s_kBytesPerWord);
+    const auto lastWord {static_cast<std::uint32_t>(kSmallSize - Memory::s_kBytesPerWord)};
 
     memory.write32(lastWord, 0xDEADBEEF);
 

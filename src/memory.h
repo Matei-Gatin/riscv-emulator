@@ -7,8 +7,8 @@
 
 class Memory {
 public:
-    static constexpr std::size_t s_kDefaultSize = 1024 * 1024;
-    static constexpr std::uint32_t s_kBytesPerWord = 4;
+    static constexpr std::size_t s_kDefaultSize {1024 * 1024};
+    static constexpr std::uint32_t s_kBytesPerWord {4};
 
     explicit Memory(const std::size_t size = s_kDefaultSize)
         : m_bytes(size) { }
@@ -22,7 +22,7 @@ public:
     void write32(std::uint32_t address, std::uint32_t value);
 
 private:
-    static constexpr std::uint32_t s_kBitsPerByte = 8;
+    static constexpr std::uint32_t s_kBitsPerByte {8};
 
     std::vector<std::uint8_t> m_bytes;
 

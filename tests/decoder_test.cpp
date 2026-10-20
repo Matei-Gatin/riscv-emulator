@@ -6,10 +6,15 @@
 
 namespace {
 
-constexpr std::uint32_t kAddiX1X0Ten = 0x00A00093;
-constexpr std::uint32_t kAddX3X1X2 = 0x002081B3;
-constexpr std::uint32_t kSubX3X1X2 = 0x402081B3;
-constexpr std::uint32_t kAllBitsSet = 0xFFFFFFFF;
+constexpr std::uint32_t kAddX3X1X2 {0x002081B3};
+constexpr std::uint32_t kSubX3X1X2 {0x402081B3};
+constexpr std::uint32_t kAllBitsSet {0xFFFFFFFF};
+
+constexpr std::uint32_t kAddiX1X0Ten {0x00A00093};
+constexpr std::uint32_t kAddiX1X0One {0x00100093};
+constexpr std::uint32_t kAddiX1X0MinusOne {0xFFF00093};
+constexpr std::uint32_t kAddiX1X02047 {0x7FF00093};
+constexpr std::uint32_t kAddiX1X0Minus2048 {0x80000093};
 
 TEST(DecoderTest, DecodesAddiFields) {
     EXPECT_EQ(decoder::opcode(kAddiX1X0Ten), 0x13);
@@ -44,6 +49,16 @@ TEST(DecoderTest, AllBitsSetGivesMaximumOfEachField) {
     EXPECT_EQ(decoder::rs1(kAllBitsSet), 31);
     EXPECT_EQ(decoder::rs2(kAllBitsSet), 31);
     EXPECT_EQ(decoder::funct7(kAllBitsSet), 0x7F);
+}
+
+TEST(DecoderTest, ImmIDecodesPositiveValues) {
+    EXPECT_EQ(decoder::immI(kAddiX1X0One), 1);
+    EXPECT_EQ(decoder::immI(kAddiX1X02047), 2047);
+}
+
+TEST(DecoderTest, ImmISignExtendsNegativeValues) {
+    EXPECT_EQ(decoder::immI(kAddiX1X0MinusOne), -1);
+    EXPECT_EQ(decoder::immI(kAddiX1X0Minus2048), -2048);
 }
 
 }
