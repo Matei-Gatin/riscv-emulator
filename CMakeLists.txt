@@ -10,7 +10,8 @@ set(VM_WARNINGS -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion)
 
 add_library(vm_core
         src/memory.cpp
-        src/registers.cpp)
+        src/registers.cpp
+        src/decoder.cpp)
 target_include_directories(vm_core PUBLIC src)
 target_compile_options(vm_core PRIVATE ${VM_WARNINGS})
 
@@ -29,7 +30,8 @@ enable_testing()
 
 add_executable(vm_tests
         tests/memory_test.cpp
-        tests/registers_test.cpp)
+        tests/registers_test.cpp
+        tests/decoder_test.cpp)
 target_link_libraries(vm_tests PRIVATE vm_core GTest::gtest_main)
 target_compile_options(vm_tests PRIVATE ${VM_WARNINGS})
 
