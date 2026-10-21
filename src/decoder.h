@@ -12,7 +12,8 @@ namespace decoder {
 [[nodiscard]] std::uint8_t rs2(std::uint32_t instruction);
 [[nodiscard]] std::uint8_t funct7(std::uint32_t instruction);
 [[nodiscard]] std::int32_t immI(std::uint32_t instruction);
-
+[[nodiscard]] std::int32_t immS(std::uint32_t instruction);
+[[nodiscard]] std::int32_t immB(std::uint32_t instruction);
 }
 
 #endif //VM_PROJECT_DECODER_H

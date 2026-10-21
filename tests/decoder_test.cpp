@@ -16,6 +16,17 @@ constexpr std::uint32_t kAddiX1X0MinusOne {0xFFF00093};
 constexpr std::uint32_t kAddiX1X02047 {0x7FF00093};
 constexpr std::uint32_t kAddiX1X0Minus2048 {0x80000093};
 
+constexpr std::uint32_t kSwX2Offset8 {0x0020A423};
+constexpr std::uint32_t kSwX2Offset2047 {0x7E20AFA3};
+constexpr std::uint32_t kSwX2OffsetMinus4 {0xFE20AE23};
+constexpr std::uint32_t kSwX2OffsetMinus2048 {0x8020A023};
+
+constexpr std::uint32_t kBX1EqualX2PCOffset8 {0x00208463};
+constexpr std::uint32_t kBX1EqualX2PCOffset2048 {0x002080E3};
+constexpr std::uint32_t kBX1EqualX2PCOffset4094 {0x7E208FE3};
+constexpr std::uint32_t kBX1EqualX2X1PCOffsetMinus4 {0xFE208EE3};
+constexpr std::uint32_t kBX1EqualX2X1PCOffsetMinus4096 {0x80208063};
+
 TEST(DecoderTest, DecodesAddiFields) {
     EXPECT_EQ(decoder::opcode(kAddiX1X0Ten), 0x13);
     EXPECT_EQ(decoder::rd(kAddiX1X0Ten), 1);
@@ -59,6 +70,27 @@ TEST(DecoderTest, ImmIDecodesPositiveValues) {
 TEST(DecoderTest, ImmISignExtendsNegativeValues) {
     EXPECT_EQ(decoder::immI(kAddiX1X0MinusOne), -1);
     EXPECT_EQ(decoder::immI(kAddiX1X0Minus2048), -2048);
+}
+
+TEST(DecoderTest, ImmSDecodesPositiveValues) {
+    EXPECT_EQ(decoder::immS(kSwX2Offset8), 8);
+    EXPECT_EQ(decoder::immS(kSwX2Offset2047), 2047);
+}
+
+TEST(DecoderTest, ImmSSignExtendsNegativeValues) {
+    EXPECT_EQ(decoder::immS(kSwX2OffsetMinus4), -4);
+    EXPECT_EQ(decoder::immS(kSwX2OffsetMinus2048), -2048);
+}
+
+TEST(DecoderTest, ImmBDecodesPositiveValues) {
+    EXPECT_EQ(decoder::immB(kBX1EqualX2PCOffset8), 8);
+    EXPECT_EQ(decoder::immB(kBX1EqualX2PCOffset2048), 2048);
+    EXPECT_EQ(decoder::immB(kBX1EqualX2PCOffset4094), 4094);
+}
+
+TEST(DecoderTest, ImmBDecodesNegativeValues) {
+    EXPECT_EQ(decoder::immB(kBX1EqualX2X1PCOffsetMinus4), -4);
+    EXPECT_EQ(decoder::immB(kBX1EqualX2X1PCOffsetMinus4096), -4096);
 }
 
 }
