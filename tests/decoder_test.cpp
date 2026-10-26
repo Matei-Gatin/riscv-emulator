@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 
 #include <cstdint>
+#include <limits>
 
 #include "decoder.h"
 
@@ -21,11 +22,23 @@ constexpr std::uint32_t kSwX2Offset2047 {0x7E20AFA3};
 constexpr std::uint32_t kSwX2OffsetMinus4 {0xFE20AE23};
 constexpr std::uint32_t kSwX2OffsetMinus2048 {0x8020A023};
 
-constexpr std::uint32_t kBX1EqualX2PCOffset8 {0x00208463};
-constexpr std::uint32_t kBX1EqualX2PCOffset2048 {0x002080E3};
-constexpr std::uint32_t kBX1EqualX2PCOffset4094 {0x7E208FE3};
-constexpr std::uint32_t kBX1EqualX2X1PCOffsetMinus4 {0xFE208EE3};
-constexpr std::uint32_t kBX1EqualX2X1PCOffsetMinus4096 {0x80208063};
+constexpr std::uint32_t kBeqX1X2Offset8 {0x00208463};
+constexpr std::uint32_t kBeqX1X2Offset2048 {0x002080E3};
+constexpr std::uint32_t kBeqX1X2Offset4094 {0x7E208FE3};
+constexpr std::uint32_t kBeqX1X2OffsetMinus4 {0xFE208EE3};
+constexpr std::uint32_t kBeqX1X2OffsetMinus4096 {0x80208063};
+
+constexpr std::uint32_t kLuiX1Upper12345 {0x123450B7};
+constexpr std::uint32_t kLuiX1Upper0 {0x000000B7};
+constexpr std::uint32_t kLuiX1UpperFFFFF {0xFFFFF0B7};
+constexpr std::uint32_t kLuiX1Upper80000 {0x800000B7};
+
+constexpr std::uint32_t kJalX1Offset8 {0x008000EF};
+constexpr std::uint32_t kJalX1Offset2048 {0x001000EF};
+constexpr std::uint32_t kJalX1Offset4096 {0x000010EF};
+constexpr std::uint32_t kJalX1Offset1048574 {0x7FFFF0EF};
+constexpr std::uint32_t kJalX1OffsetMinus4 {0xFFDFF0EF};
+constexpr std::uint32_t kJalX1OffsetMinus1048576 {0x800000EF};
 
 TEST(DecoderTest, DecodesAddiFields) {
     EXPECT_EQ(decoder::opcode(kAddiX1X0Ten), 0x13);
@@ -83,14 +96,44 @@ TEST(DecoderTest, ImmSSignExtendsNegativeValues) {
 }
 
 TEST(DecoderTest, ImmBDecodesPositiveValues) {
-    EXPECT_EQ(decoder::immB(kBX1EqualX2PCOffset8), 8);
-    EXPECT_EQ(decoder::immB(kBX1EqualX2PCOffset2048), 2048);
-    EXPECT_EQ(decoder::immB(kBX1EqualX2PCOffset4094), 4094);
+    EXPECT_EQ(decoder::immB(kBeqX1X2Offset8), 8);
+    EXPECT_EQ(decoder::immB(kBeqX1X2Offset2048), 2048);
+    EXPECT_EQ(decoder::immB(kBeqX1X2Offset4094), 4094);
 }
 
 TEST(DecoderTest, ImmBDecodesNegativeValues) {
-    EXPECT_EQ(decoder::immB(kBX1EqualX2X1PCOffsetMinus4), -4);
-    EXPECT_EQ(decoder::immB(kBX1EqualX2X1PCOffsetMinus4096), -4096);
+    EXPECT_EQ(decoder::immB(kBeqX1X2OffsetMinus4), -4);
+    EXPECT_EQ(decoder::immB(kBeqX1X2OffsetMinus4096), -4096);
+}
+
+TEST(DecoderTest, ImmUDecodesPositiveValues) {
+    EXPECT_EQ(decoder::immU(kLuiX1Upper12345), 0x12345000);
+    EXPECT_EQ(decoder::immU(kLuiX1Upper0), 0);
+}
+
+TEST(DecoderTest, ImmUDecodesNegativeValues) {
+    EXPECT_EQ(decoder::immU(kLuiX1UpperFFFFF), -4096);
+    EXPECT_EQ(decoder::immU(kLuiX1Upper80000), std::numeric_limits<std::int32_t>::min());
+}
+
+TEST(DecoderTest, ImmUClearsLowTwelveBits) {
+    EXPECT_EQ(decoder::immU(kAllBitsSet), -4096);
+}
+
+TEST(DecoderTest, ImmJDecodesPositiveValues) {
+    EXPECT_EQ(decoder::immJ(kJalX1Offset8), 8);
+    EXPECT_EQ(decoder::immJ(kJalX1Offset2048), 2048);
+    EXPECT_EQ(decoder::immJ(kJalX1Offset4096), 4096);
+    EXPECT_EQ(decoder::immJ(kJalX1Offset1048574), 1048574);
+}
+
+TEST(DecoderTest, ImmJDecodesNegativeValues) {
+    EXPECT_EQ(decoder::immJ(kJalX1OffsetMinus4), -4);
+    EXPECT_EQ(decoder::immJ(kJalX1OffsetMinus1048576), -1048576);
+}
+
+TEST(DecoderTest, ImmJAllBitsSetKeepsBitZeroClear) {
+    EXPECT_EQ(decoder::immJ(kAllBitsSet), -2);
 }
 
 }
