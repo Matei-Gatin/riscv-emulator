@@ -25,6 +25,15 @@ TEST(MemoryTest, Write8ThenRead8ReturnsSameByte) {
     EXPECT_EQ(memory.read8(0x1000), 0xAB);
 }
 
+TEST(MemoryTest, Write16StoresLowestByteFirst) {
+    Memory memory{};
+
+    memory.write16(0x100, 0x1234);
+
+    EXPECT_EQ(memory.read8(0x100), 0x34);
+    EXPECT_EQ(memory.read8(0x101), 0x12);
+}
+
 TEST(MemoryTest, Write32StoresLowestByteFirst) {
     Memory memory{};
 
@@ -46,6 +55,22 @@ TEST(MemoryTest, Read32TreatsLowestAddressAsLowestByte) {
     EXPECT_EQ(memory.read32(0x100), 0x12345678u);
 }
 
+TEST(MemoryTest, Read16TreatsLowestAddressAsLowestByte) {
+    Memory memory{};
+    memory.write8(0x100, 0x78);
+    memory.write8(0x101, 0x56);
+
+    EXPECT_EQ(memory.read16(0x100), 0x5678u);
+}
+
+TEST(MemoryTest, Write16ThenRead16RoundTrips) {
+    Memory memory{};
+
+    memory.write16(0x1000, 0xBEEF);
+
+    EXPECT_EQ(memory.read16(0x1000), 0xBEEF);
+}
+
 TEST(MemoryTest, Write32ThenRead32RoundTrips) {
     Memory memory{};
 
@@ -54,13 +79,22 @@ TEST(MemoryTest, Write32ThenRead32RoundTrips) {
     EXPECT_EQ(memory.read32(0x1002), 100000000u);
 }
 
-TEST(MemoryTest, LastWholeWordIsAccessible) {
+TEST(MemoryTest, LastWordIsAccessible) {
     Memory memory{kSmallSize};
-    const auto lastWord {static_cast<std::uint32_t>(kSmallSize - Memory::s_kBytesPerWord)};
+    constexpr auto lastWord {static_cast<std::uint32_t>(kSmallSize - Memory::s_kBytesPerWord)};
 
     memory.write32(lastWord, 0xDEADBEEF);
 
     EXPECT_EQ(memory.read32(lastWord), 0xDEADBEEFu);
+}
+
+TEST(MemoryTest, LastHalfWordIsAccessible) {
+    Memory memory{kSmallSize};
+    constexpr auto lastHalfWord {static_cast<std::uint32_t>(kSmallSize - Memory::s_kBytesPerHalfWord)};
+
+    memory.write16(lastHalfWord, 0xBEEF);
+
+    EXPECT_EQ(memory.read16(lastHalfWord), 0xBEEF);
 }
 
 TEST(MemoryTest, Read8PastEndThrows) {
@@ -69,10 +103,24 @@ TEST(MemoryTest, Read8PastEndThrows) {
     EXPECT_THROW((void)memory.read8(kSmallSize), std::out_of_range);
 }
 
+TEST(MemoryTest, Read16CrossingEndThrows) {
+    const Memory memory{kSmallSize};
+
+    EXPECT_THROW((void)memory.read16(kSmallSize - 1), std::out_of_range);
+}
+
 TEST(MemoryTest, Read32CrossingEndThrows) {
     const Memory memory{kSmallSize};
 
     EXPECT_THROW((void)memory.read32(kSmallSize - 2), std::out_of_range);
+}
+
+TEST(MemoryTest, FailedWrite16ChangesNothing) {
+    Memory memory{kSmallSize};
+
+    EXPECT_THROW(memory.write16(kSmallSize - 1, 0xFFFF), std::out_of_range);
+
+    EXPECT_EQ(memory.read8(kSmallSize - 1), 0);
 }
 
 TEST(MemoryTest, FailedWrite32ChangesNothing) {

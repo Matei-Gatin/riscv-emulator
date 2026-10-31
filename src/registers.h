@@ -16,8 +16,6 @@ private:
 
     std::array<std::uint32_t, s_kRegisterCount> m_registers {};
 
-    std::uint32_t m_pc {};
-
     static void checkIndex(std::uint32_t index);
 };
 

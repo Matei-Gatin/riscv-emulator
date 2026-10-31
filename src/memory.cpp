@@ -21,6 +21,25 @@ void Memory::write8(const std::uint32_t address, const std::uint8_t value) {
     m_bytes[address] = value;
 }
 
+std::uint16_t Memory::read16(const std::uint32_t address) const {
+    checkRange(address, s_kBytesPerHalfWord);
+
+    std::uint16_t value {};
+    for (std::uint32_t i {0}; i < s_kBytesPerHalfWord; i++) {
+        value |= static_cast<std::uint16_t>(m_bytes[address + i] << (s_kBitsPerByte * i));
+    }
+
+    return value;
+}
+
+void Memory::write16(const std::uint32_t address, const std::uint16_t value) {
+    checkRange(address, s_kBytesPerHalfWord);
+
+    for (std::uint32_t i {0}; i < s_kBytesPerHalfWord ;i++) {
+        m_bytes[address + i] = static_cast<std::uint8_t>(value >> (s_kBitsPerByte * i));
+    }
+}
+
 std::uint32_t Memory::read32(const std::uint32_t address) const {
     checkRange(address, s_kBytesPerWord);
 
