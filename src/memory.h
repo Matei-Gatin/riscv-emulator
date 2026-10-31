@@ -8,6 +8,7 @@
 class Memory {
 public:
     static constexpr std::size_t s_kDefaultSize {1024 * 1024};
+    static constexpr std::size_t s_kSingleByte {1};
     static constexpr std::size_t s_kBytesPerHalfWord {2};
     static constexpr std::size_t s_kBytesPerWord {4};
 

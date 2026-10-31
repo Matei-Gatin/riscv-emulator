@@ -12,12 +12,12 @@ void Memory::checkRange(const std::uint32_t address, const std::size_t length) c
 }
 
 std::uint8_t Memory::read8(const std::uint32_t address) const {
-    checkRange(address, 1);
+    checkRange(address, s_kSingleByte);
     return m_bytes[address];
 }
 
 void Memory::write8(const std::uint32_t address, const std::uint8_t value) {
-    checkRange(address, 1);
+    checkRange(address, s_kSingleByte);
     m_bytes[address] = value;
 }
 
@@ -35,7 +35,7 @@ std::uint16_t Memory::read16(const std::uint32_t address) const {
 void Memory::write16(const std::uint32_t address, const std::uint16_t value) {
     checkRange(address, s_kBytesPerHalfWord);
 
-    for (std::uint32_t i {0}; i < s_kBytesPerHalfWord ;i++) {
+    for (std::uint32_t i {0}; i < s_kBytesPerHalfWord; i++) {
         m_bytes[address + i] = static_cast<std::uint8_t>(value >> (s_kBitsPerByte * i));
     }
 }

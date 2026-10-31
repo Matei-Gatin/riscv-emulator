@@ -25,11 +25,11 @@ enum class Opcode : std::uint8_t {
 };
 
 enum class LoadFunct3 : std::uint8_t {
-    LB = 0x0,
-    LH = 0x1,
-    LW = 0x2,
-    LBU = 0x4,
-    LHU = 0x5
+    Lb = 0x0,
+    Lh = 0x1,
+    Lw = 0x2,
+    Lbu = 0x4,
+    Lhu = 0x5
 };
 
 }
@@ -42,19 +42,19 @@ void Cpu::executeLoad(const std::uint32_t instruction) {
     std::uint32_t value {};
 
     switch (static_cast<LoadFunct3>(decoder::funct3(instruction))) {
-        case LoadFunct3::LB:
+        case LoadFunct3::Lb:
             value = static_cast<std::uint32_t>(static_cast<std::int8_t>(m_memory.read8(address)));
             break;
-        case LoadFunct3::LH:
+        case LoadFunct3::Lh:
             value = static_cast<std::uint32_t>(static_cast<std::int16_t>(m_memory.read16(address)));
             break;
-        case LoadFunct3::LW:
+        case LoadFunct3::Lw:
             value = m_memory.read32(address);
             break;
-        case LoadFunct3::LBU:
+        case LoadFunct3::Lbu:
             value = m_memory.read8(address);
             break;
-        case LoadFunct3::LHU:
+        case LoadFunct3::Lhu:
             value = m_memory.read16(address);
             break;
         default:

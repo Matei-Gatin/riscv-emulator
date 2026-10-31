@@ -12,11 +12,11 @@ public:
 
     void step();
 
-    [[nodiscard]] const Registers& getRegister() const {
+    [[nodiscard]] const Registers& registers() const {
         return m_registers;
     }
 
-    [[nodiscard]] std::uint32_t getPc() const {
+    [[nodiscard]] std::uint32_t pc() const {
         return m_pc;
     }
 
