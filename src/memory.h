@@ -12,10 +12,11 @@ public:
     static constexpr std::size_t s_kBytesPerHalfWord {2};
     static constexpr std::size_t s_kBytesPerWord {4};
 
-    explicit Memory(const std::size_t size = s_kDefaultSize)
-        : m_bytes(size) { }
+    explicit Memory(const std::size_t size = s_kDefaultSize) : m_bytes(size) {}
 
-    [[nodiscard]] std::size_t size() const { return m_bytes.size(); }
+    [[nodiscard]] std::size_t size() const {
+        return m_bytes.size();
+    }
 
     [[nodiscard]] std::uint8_t read8(std::uint32_t address) const;
     void write8(std::uint32_t address, std::uint8_t value);
@@ -34,4 +35,4 @@ private:
     void checkRange(std::uint32_t address, std::size_t length) const;
 };
 
-#endif //VM_PROJECT_MEMORY_H
+#endif // VM_PROJECT_MEMORY_H

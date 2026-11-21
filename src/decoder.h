@@ -19,4 +19,4 @@ namespace decoder {
 
 }
 
-#endif //VM_PROJECT_DECODER_H
+#endif // VM_PROJECT_DECODER_H

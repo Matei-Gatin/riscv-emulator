@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+files=$(git diff --cached --name-only --diff-filter=ACM -- '*.cpp' '*.h')
+[ -z "$files" ] && exit 0
+
+if ! clang-format --dry-run --Werror $files; then
+    echo "pre-commit: run 'clang-format -i src/*.cpp src/*.h tests/*.cpp' and stage again"
+    exit 1
+fi

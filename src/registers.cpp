@@ -1,12 +1,13 @@
 #include "registers.h"
 
+#include <cstdint>
 #include <format>
 #include <stdexcept>
 
 void Registers::checkIndex(const std::uint32_t index) {
     if (index >= s_kRegisterCount) {
-        throw std::out_of_range(std::format(
-            "register index out of range: {}, register count {}", index, s_kRegisterCount));
+        throw std::out_of_range(std::format("register index out of range: {}, register count {}",
+                                            index, s_kRegisterCount));
     }
 }
 

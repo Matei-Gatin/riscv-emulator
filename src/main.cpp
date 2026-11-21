@@ -5,7 +5,7 @@
 
 int main() {
     try {
-        Memory memory{};
+        const Memory memory {};
         std::cout << "guest memory: " << memory.size() << " bytes\n";
     } catch (const std::exception& error) {
         std::cerr << "error: " << error.what() << '\n';

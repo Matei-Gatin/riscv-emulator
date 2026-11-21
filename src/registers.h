@@ -19,4 +19,4 @@ private:
     static void checkIndex(std::uint32_t index);
 };
 
-#endif //VM_PROJECT_REGISTERS_H
+#endif // VM_PROJECT_REGISTERS_H

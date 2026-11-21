@@ -1,13 +1,15 @@
 #include "memory.h"
 
+#include <cstddef>
+#include <cstdint>
 #include <format>
 #include <stdexcept>
 
 void Memory::checkRange(const std::uint32_t address, const std::size_t length) const {
     if (address >= m_bytes.size() || length > m_bytes.size() - address) {
         throw std::out_of_range(std::format(
-            "memory access out of range: address 0x{:08x}, length {}, memory size {}",
-            address, length, m_bytes.size()));
+                "memory access out of range: address 0x{:08x}, length {}, memory size {}", address,
+                length, m_bytes.size()));
     }
 }
 

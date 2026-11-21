@@ -45,6 +45,19 @@ jobs:
       - name: Test
         run: ctest --test-dir build --output-on-failure
 
+  format:
+    name: clang-format
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install tools
+        run: |
+          wget -qO llvm.sh https://apt.llvm.org/llvm.sh
+          sudo bash llvm.sh 21
+          sudo apt-get install -y clang-format-21
+      - name: Check formatting
+        run: clang-format-21 --dry-run --Werror src/*.cpp src/*.h tests/*.cpp
+
   clang-tidy:
     name: clang-tidy
     runs-on: ubuntu-24.04
@@ -53,9 +66,12 @@ jobs:
       - name: Install tools
         run: |
           sudo apt-get update
-          sudo apt-get install -y g++-14 clang-tidy-18
+          sudo apt-get install -y g++-14
+          wget -qO llvm.sh https://apt.llvm.org/llvm.sh
+          sudo bash llvm.sh 21
+          sudo apt-get install -y clang-tidy-21
           pipx install "cmake~=4.1"
       - name: Configure
         run: cmake -S . -B build
       - name: Run clang-tidy
-        run: clang-tidy-18 -p build src/*.cpp
+        run: clang-tidy-21 -p build src/*.cpp

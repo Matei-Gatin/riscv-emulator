@@ -6,7 +6,16 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-set(VM_WARNINGS -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion)
+set(VM_WARNINGS
+        -Wall -Wextra -Wpedantic
+        -Wconversion -Wsign-conversion
+        -Wshadow -Wold-style-cast -Wcast-align -Wcast-qual
+        -Wnon-virtual-dtor -Woverloaded-virtual
+        -Wnull-dereference -Wdouble-promotion -Wformat=2 -Wimplicit-fallthrough
+        -Wundef -Wmissing-declarations
+        $<$<CXX_COMPILER_ID:GNU>:-Wduplicated-cond -Wduplicated-branches -Wlogical-op -Wuseless-cast>)
+
+add_compile_definitions($<$<CONFIG:Debug>:_GLIBCXX_ASSERTIONS>)
 
 add_library(vm_core
         src/memory.cpp
@@ -24,7 +33,9 @@ include(FetchContent)
 FetchContent_Declare(
         googletest
         URL https://github.com/google/googletest/archive/refs/tags/v1.17.0.tar.gz
-        DOWNLOAD_EXTRACT_TIMESTAMP TRUE)
+        URL_HASH SHA256=65fab701d9829d38cb77c14acdc431d2108bfdbf8979e40eb8ae567edf10b27c
+        DOWNLOAD_EXTRACT_TIMESTAMP TRUE
+        SYSTEM)
 FetchContent_MakeAvailable(googletest)
 
 enable_testing()
