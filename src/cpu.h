@@ -28,6 +28,8 @@ private:
     std::uint32_t m_pc {};
 
     void executeLoad(std::uint32_t instruction);
+
+    void executeOpImm(std::uint32_t instruction);
 };
 
-#endif //VM_PROJECT_CPU_H
+#endif // VM_PROJECT_CPU_H
