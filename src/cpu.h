@@ -30,6 +30,8 @@ private:
     void executeLoad(std::uint32_t instruction);
 
     void executeOpImm(std::uint32_t instruction);
+
+    void executeOp(std::uint32_t instruction);
 };
 
 #endif // VM_PROJECT_CPU_H
