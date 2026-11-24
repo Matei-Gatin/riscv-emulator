@@ -32,6 +32,10 @@ private:
     void executeOpImm(std::uint32_t instruction);
 
     void executeOp(std::uint32_t instruction);
+
+    void executeLui(std::uint32_t instruction);
+
+    void executeAuipc(std::uint32_t instruction);
 };
 
 #endif // VM_PROJECT_CPU_H

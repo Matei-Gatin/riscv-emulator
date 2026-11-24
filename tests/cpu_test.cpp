@@ -125,12 +125,13 @@ TEST_F(CpuLoadTest, LoadIntoX0IsIgnored) {
 }
 
 TEST_F(CpuLoadTest, LoadOutOfRangeThrowsAndChangesNothing) {
+    runInstruction(kAddiX1X0Imm1);
     m_memory.write32(m_cpu.pc(), kLwX1OffsetMinus4X0);
 
     EXPECT_THROW(m_cpu.step(), std::out_of_range);
 
-    EXPECT_EQ(m_cpu.pc(), kStartPc);
-    EXPECT_EQ(m_cpu.registers().read(kX1), 0);
+    EXPECT_EQ(m_cpu.pc(), kPcAfterOneStep);
+    EXPECT_EQ(m_cpu.registers().read(kX1), 1);
 }
 
 TEST_F(CpuLoadTest, IllegalFunct3Throws) {
@@ -486,18 +487,92 @@ TEST_F(CpuOpTest, AndKeepsCommonBits) {
 }
 
 TEST_F(CpuOpTest, MulIsNotSupportedAndChangesNothing) {
+    runInstruction(kAddiX5X0Imm10);
     m_memory.write32(m_cpu.pc(), kMulX5X1X2);
 
     EXPECT_THROW(m_cpu.step(), std::invalid_argument);
 
-    EXPECT_EQ(m_cpu.pc(), kStartPc);
-    EXPECT_EQ(m_cpu.registers().read(kX5), 0);
+    EXPECT_EQ(m_cpu.pc(), kPcAfterOneStep);
+    EXPECT_EQ(m_cpu.registers().read(kX5), 10);
 }
 
 TEST_F(CpuOpTest, ArithmeticFunct7OnXorThrows) {
     m_memory.write32(m_cpu.pc(), kXorWithArithmeticFunct7);
 
     EXPECT_THROW(m_cpu.step(), std::invalid_argument);
+}
+
+class CpuLuiTest : public CpuTest {};
+
+constexpr std::uint32_t kLuiX1Imm0x7FFFF {0x7FFFF0B7};
+constexpr std::uint32_t kLuiX1Imm0x80000 {0x800000B7};
+constexpr std::uint32_t kLuiX1Imm0x12345 {0x123450B7};
+constexpr std::uint32_t kLuiX1Imm0x12346 {0x123460B7};
+constexpr std::uint32_t kAddiX1X1Imm0x678 {0x67808093};
+constexpr std::uint32_t kAddiX1X1ImmMinus1 {0xFFF08093};
+
+TEST_F(CpuLuiTest, LuiPlacesImmediateInUpperBits) {
+    runInstruction(kLuiX1Imm0x7FFFF);
+
+    EXPECT_EQ(m_cpu.registers().read(kX1), 0x7FFFF000);
+}
+
+TEST_F(CpuLuiTest, LuiPreservesSignBit) {
+    runInstruction(kLuiX1Imm0x80000);
+
+    EXPECT_EQ(m_cpu.registers().read(kX1), 0x80000000);
+}
+
+TEST_F(CpuLuiTest, LuiOverwritesWholeRegister) {
+    runInstruction(kAddiX1X0ImmMinus1);
+
+    runInstruction(kLuiX1Imm0x12345);
+
+    EXPECT_EQ(m_cpu.registers().read(kX1), 0x12345000);
+}
+
+TEST_F(CpuLuiTest, LuiThenAddiBuildsFullConstant) {
+    runInstruction(kLuiX1Imm0x12345);
+    runInstruction(kAddiX1X1Imm0x678);
+
+    EXPECT_EQ(m_cpu.registers().read(kX1), 0x12345678);
+}
+
+TEST_F(CpuLuiTest, LuiRoundsUpWhenAddiImmediateIsNegative) {
+    runInstruction(kLuiX1Imm0x12346);
+    runInstruction(kAddiX1X1ImmMinus1);
+
+    EXPECT_EQ(m_cpu.registers().read(kX1), 0x12345FFF);
+}
+
+class CpuAuipcTest : public CpuTest {};
+
+constexpr std::uint32_t kAuipcX1Imm0x7FFFF {0x7FFFF097};
+constexpr std::uint32_t kAuipcX1ImmMinus1 {0xFFFFF097};
+constexpr std::uint32_t kAuipcX1Imm0 {0x00000097};
+
+TEST_F(CpuAuipcTest, AuipcPlacesImmediateInUpperBitsPlusPC) {
+    runInstruction(kLuiX1Imm0x7FFFF);
+
+    runInstruction(kAuipcX1Imm0x7FFFF);
+
+    EXPECT_EQ(m_cpu.registers().read(kX1), 0x7FFFF004);
+}
+
+TEST_F(CpuAuipcTest, AuipcWithNegativeImmediateGoesBackwards) {
+    runInstruction(kAddiX1X0Imm1);
+
+    runInstruction(kAuipcX1ImmMinus1);
+
+    EXPECT_EQ(m_cpu.registers().read(kX1), 0xFFFFF004);
+}
+
+TEST_F(CpuAuipcTest, AuipcWithZeroImmediateReadsPc) {
+    runInstruction(kAddiX1X0Imm1);
+
+    runInstruction(kAuipcX1Imm0);
+
+    EXPECT_EQ(m_cpu.registers().read(kX1), kPcAfterOneStep);
 }
 
 }

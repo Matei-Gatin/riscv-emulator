@@ -196,6 +196,18 @@ void Cpu::executeOp(const std::uint32_t instruction) {
     m_registers.write(decoder::rd(instruction), value);
 }
 
+void Cpu::executeLui(const std::uint32_t instruction) {
+    const std::uint32_t imm {static_cast<std::uint32_t>(decoder::immU(instruction))};
+
+    m_registers.write(decoder::rd(instruction), imm);
+}
+
+void Cpu::executeAuipc(const std::uint32_t instruction) {
+    const std::uint32_t imm {static_cast<std::uint32_t>(decoder::immU(instruction))};
+
+    m_registers.write(decoder::rd(instruction), imm + m_pc);
+}
+
 void Cpu::step() {
     const std::uint32_t instruction {m_memory.read32(m_pc)};
 
@@ -209,6 +221,7 @@ void Cpu::step() {
             executeOpImm(instruction);
             break;
         case Opcode::Auipc:
+            executeAuipc(instruction);
             break;
         case Opcode::Store:
             break;
@@ -216,6 +229,7 @@ void Cpu::step() {
             executeOp(instruction);
             break;
         case Opcode::Lui:
+            executeLui(instruction);
             break;
         case Opcode::Branch:
             break;
